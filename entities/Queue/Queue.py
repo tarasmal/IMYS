@@ -2,11 +2,11 @@ from collections import deque
 from typing import Optional, Generic, TypeVar
 from .QueueItem import QueueItem
 
-T = TypeVar("T", bound=QueueItem)
+T = TypeVar("T")
 
 class Queue(Generic[T]):
     def __init__(self, max_size: Optional[int] = None):
-        self.queue = deque()
+        self.queue = deque[QueueItem[T]]()
         self.max_size = max_size
         self.rejected_count = 0
 
@@ -16,21 +16,21 @@ class Queue(Generic[T]):
     def is_empty(self) -> bool:
         return len(self.queue) == 0
 
-    def enqueue(self, item: T) -> bool:
+    def enqueue(self, item: QueueItem[T]) -> bool:
         if self.is_full():
             self.rejected_count += 1
             return False
         self.queue.append(item)
         return True
 
-    def dequeue(self, wait_time: float) -> Optional[T]:
+    def dequeue(self, wait_time: float) -> Optional[QueueItem[T]]:
         if self.is_empty():
             return None
         item = self.queue.popleft()
-        item.wait_time = wait_time
+        item.set_wait_time(wait_time)
         return item
 
-    def peek(self) -> Optional[T]:
+    def peek(self) -> Optional[QueueItem[T]]:
         if self.is_empty():
             return None
         return self.queue[0]
