@@ -8,9 +8,9 @@ if __name__ == "__main__":
     queue = Queue[str](max_size=3)
 
     print("Enqueuing QueueItems:")
-    print("Queued:", queue.enqueue(QueueItem("Client 1", priority=0)))
-    print("Queued:", queue.enqueue(QueueItem("Client 2", priority=1)))
-    print("Queued:", queue.enqueue(QueueItem("Client 3", priority=0)))
+    print("Queued:", queue.enqueue(QueueItem("Client 1", 1, priority=0)))
+    print("Queued:", queue.enqueue(QueueItem("Client 2", 2, priority=1)))
+    print("Queued:", queue.enqueue(QueueItem("Client 3", 3, priority=0)))
 
     print("\nCurrent queue state:")
     print(queue)
@@ -27,9 +27,9 @@ if __name__ == "__main__":
 
     priority_queue = PriorityQueue[str](max_size=6)
 
-    print("Queued:", priority_queue.enqueue(QueueItem("Client 1", priority=0)))
-    print("Queued:", priority_queue.enqueue(QueueItem("Client 2", priority=1)))
-    print("Queued:", priority_queue.enqueue(QueueItem("Client 3", priority=0)))
+    print("Queued:", priority_queue.enqueue(QueueItem("Client 1", 1, priority=0)))
+    print("Queued:", priority_queue.enqueue(QueueItem("Client 2", 2, priority=1)))
+    print("Queued:", priority_queue.enqueue(QueueItem("Client 3", 3, priority=0)))
 
     print("Current Priority Queue State:")
     print(priority_queue)

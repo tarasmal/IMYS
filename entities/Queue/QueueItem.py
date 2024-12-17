@@ -5,10 +5,10 @@ T = TypeVar("T")
 Priority = Literal[0, 1]
 
 class QueueItem(Generic[T]):
-    def __init__(self, entity: T, priority: Optional[Priority] = None):
+    def __init__(self, entity: T, entry_time: int, priority: Optional[Priority] = None):
         self.entity = entity
         self.priority = priority
-        self.entry_time = time()
+        self.entry_time = entry_time
         self.wait_time: Optional[float] = None
 
     def set_wait_time(self, wait_time: float) -> None:
@@ -30,4 +30,5 @@ class QueueItem(Generic[T]):
             else "Adult"
         )
         wait_time_repr = f"{self.wait_time:.2f}" if self.wait_time is not None else "Not set"
-        return f"{self.entity} ({priority_repr}, wait time: {wait_time_repr})"
+        entry_time_repr = self.entry_time
+        return f"{self.entity} ({priority_repr}, wait time: {wait_time_repr}, entry time: {entry_time_repr})"
