@@ -1,15 +1,21 @@
 import random
-from typing import List, Tuple
+import threading
+from typing import Tuple, List
 from .Customer import Customer
+from ..State.EntityGeneratorState import EntityGeneratorsState
 
-class CustomerGenerator:
-    def __init__(self, simulation_time: int, lambda_rate: float, age_range: Tuple[int, int]):
+
+class CustomerGenerator(threading.Thread):
+    def __init__(self, simulation_time: int, lambda_rate: float, age_range: Tuple[int, int],
+                 state: EntityGeneratorsState, customer_list: List[Customer]):
+        super().__init__()
         self.simulation_time = simulation_time
         self.lambda_rate = lambda_rate
         self.age_range = age_range
-        self.counter = 1
+        self.state = state
+        self.customer_list = customer_list
 
-    def poisson_arrivals(self) -> List[int]:
+    def poisson_arrivals(self) -> List[float]:
         current_time = 0
         arrival_times = []
         while current_time < self.simulation_time:
@@ -19,11 +25,11 @@ class CustomerGenerator:
                 arrival_times.append(current_time)
         return arrival_times
 
-    def generate_customers(self) -> List[Customer]:
+    def run(self):
         arrival_times = self.poisson_arrivals()
-        customers = []
         for _ in arrival_times:
             age = random.randint(*self.age_range)
-            customers.append(Customer(number=self.counter, age=age))
-            self.counter += 1
-        return customers
+            entry_time = self.state.get_and_increment_entry_time()
+            customer = Customer(number=entry_time, age=age, entry_time=entry_time)
+            self.customer_list.append(customer)
+

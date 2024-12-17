@@ -32,3 +32,7 @@ class QueueItem(Generic[T]):
         wait_time_repr = f"{self.wait_time:.2f}" if self.wait_time is not None else "Not set"
         entry_time_repr = self.entry_time
         return f"{self.entity} ({priority_repr}, wait time: {wait_time_repr}, entry time: {entry_time_repr})"
+
+    @staticmethod
+    def define_priority(age: float) -> Priority:
+        return 1 if age < 18 else 0
