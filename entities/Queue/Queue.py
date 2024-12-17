@@ -16,12 +16,12 @@ class Queue(Generic[T]):
     def is_empty(self) -> bool:
         return len(self.queue) == 0
 
-    def enqueue(self, item: QueueItem[T]) -> bool:
+    def enqueue(self, item: QueueItem[T]) -> Optional[QueueItem[T]]:
         if self.is_full():
             self.rejected_count += 1
-            return False
+            return
         self.queue.append(item)
-        return True
+        return item
 
     def dequeue(self, wait_time: float) -> Optional[QueueItem[T]]:
         if self.is_empty():
