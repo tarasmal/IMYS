@@ -4,7 +4,7 @@ from entities.Queue.QueueItem import QueueItem
 if __name__ == "__main__":
     print("=== Testing Queue with Wait Time ===\n")
 
-    queue = Queue[QueueItem[str]](max_size=3)
+    queue = Queue[str](max_size=3)
 
     print("Enqueuing QueueItems:")
     queue.enqueue(QueueItem("Client 1"))
