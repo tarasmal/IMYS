@@ -1,8 +1,10 @@
-from entities.Queue.Queue import Queue
-from entities.Queue.QueueItem import QueueItem
-from entities.Queue.PriorityQueue import  PriorityQueue
+from random import shuffle, randint
+
 from entities.Customer.CustomerGenerator import CustomerGenerator
-simulation_time = 50
+from entities.Queue.QueueItem import QueueItem
+from entities.Queue.PriorityQueue import PriorityQueue
+
+simulation_time = 2
 if __name__ == "__main__":
     priority_customer_generator = CustomerGenerator(simulation_time, 1.5, (1, 17))
     regular_customer_generator = CustomerGenerator(simulation_time, 1.5, (18, 100))
@@ -12,6 +14,22 @@ if __name__ == "__main__":
     print(regular_customers)
     print("Priority Customers number: ", len(priority_customers))
     print("Regular Customers number: ", len(regular_customers))
+
+    all_customers = priority_customers + regular_customers
+    total_entries = len(all_customers)
+    priority_queue = PriorityQueue()
+    entry_times = list(range(1, total_entries + 1))
+    shuffle(entry_times)
+    for customer, entry_time in zip(all_customers, entry_times):
+        customer.entry_time = entry_time
+    all_customers.sort(key=lambda c: (-QueueItem.define_priority(c.age), c.entry_time))
+    for customer in all_customers:
+        priority = QueueItem.define_priority(customer.age)
+        queue_item = QueueItem(entity=customer, entry_time=customer.entry_time, priority=priority)
+        priority_queue.enqueue(queue_item)
+
+
+    print(priority_queue)
     # print("=== Testing Queue witout priority ===\n")
     #
     # queue = Queue[str](max_size=3)
