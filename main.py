@@ -1,72 +1,84 @@
-from random import shuffle, randint
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-from entities.Customer.CustomerGenerator import CustomerGenerator
-from entities.Queue.QueueItem import QueueItem
-from entities.Queue.PriorityQueue import PriorityQueue
+# Дані таблиці 5.1
+columns = [
+    "№",
+    "λ_1",  # середня інтенсивність надходження клієнтів із пріоритетом
+    "λ_2",  # середня інтенсивність надходження клієнтів без пріоритету
+    "μ_1",  # середня інтенсивність обслуговування на касах
+    "μ_2",  # середня інтенсивність обслуговування столиках
+    "σ",    # стандартне відхилення часу користування клієнтом столика
+    "c_1",  # мінімальний час користування смітником
+    "c_2",  # максимальний час користування смітником
+    "n",    # кількість столиків
+    "W_q",  # середній час очікування клієнта в черзі до кас
+    "W_s",  # середній час перебування клієнта в закладі швидкого харчування
+    "L_q",  # середня кількість клієнтів у черзі до кас
+    "P_1",  # частка обслужених клієнтів з пріоритетом
+    "P_2",  # частка обслужених клієнтів без пріоритету
+    "K_1",  # коефіцієнт використання кас протягом часу роботи системи
+    "K_2",  # коефіцієнт використання столиків протягом часу роботи системи
+    "K_3",  # коефіцієнт використання урн протягом часу роботи системи
+]
 
-simulation_time = 2
-if __name__ == "__main__":
-    priority_customer_generator = CustomerGenerator(simulation_time, 1.5, (1, 17))
-    regular_customer_generator = CustomerGenerator(simulation_time, 1.5, (18, 100))
-    priority_customers = priority_customer_generator.generate_customers()
-    regular_customers = regular_customer_generator.generate_customers()
-    print(priority_customers)
-    print(regular_customers)
-    print("Priority Customers number: ", len(priority_customers))
-    print("Regular Customers number: ", len(regular_customers))
+data = [
+    [1, 1, 1, 1, 2, 2, 1, 3, 10, 0.06306, 3.829, 0.1227, 0.995, 0.997, 0.4827, 0.2436, 0.6244],
+    [2, 2, 1, 1, 2, 2, 1, 3, 10, 0.5771, 6.405, 1.736, 0.978, 0.984, 0.7433, 0.3811, 0.95],
+    [3, 1, 2, 1, 2, 2, 1, 3, 10, 0.5771, 6.381, 1.736, 0.984, 0.978, 0.7433, 0.3812, 0.95],
+    [4, 2, 2, 1, 2, 2, 1, 3, 10, 3.486, 24.15, 14.81, 0.874, 0.825, 0.9659, 0.4899, 0.9793],
+    [5, 3, 3, 1, 2, 2, 1, 3, 10, 11.26, 35.04, 46.96, 0.865, 0.816, 0.9992, 0.5073, 0.9841],
+    [6, 3, 3, 2, 2, 2, 1, 3, 10, 0.1707, 32.53, 1.065, 0.74, 0.738, 0.7635, 0.796, 0.9871],
+    [7, 6, 6, 2, 2, 2, 1, 3, 10, 5.819, 39.92, 48.03, 0.692, 0.673, 0.9996, 0.9913, 0.9924],
+    [8, 6, 6, 2, 0.5, 0.1, 1, 3, 10, 5.819, 39.67, 48.03, 0.693, 0.673, 0.9996, 0.1993, 0.9975],
+    [9, 6, 6, 5, 0.5, 0.1, 5, 10, 10, 0.02249, 11.61, 0.2774, 0.537, 0.537, 0.6061, 0.3069, 0.9979],
+    [10, 6, 6, 5, 10, 1, 1, 2, 15, 0.02249, 29.39, 0.2774, 0.623, 0.624, 0.6061, 0.9949, 0.7342],
+]
 
-    all_customers = priority_customers + regular_customers
-    total_entries = len(all_customers)
-    priority_queue = PriorityQueue()
-    entry_times = list(range(1, total_entries + 1))
-    shuffle(entry_times)
-    for customer, entry_time in zip(all_customers, entry_times):
-        customer.entry_time = entry_time
-    all_customers.sort(key=lambda c: (-QueueItem.define_priority(c.age), c.entry_time))
-    for customer in all_customers:
-        priority = QueueItem.define_priority(customer.age)
-        queue_item = QueueItem(entity=customer, entry_time=customer.entry_time, priority=priority)
-        priority_queue.enqueue(queue_item)
+assert len(columns) == len(data[0]), f"Кількість стовпців у 'columns' ({len(columns)}) не збігається з кількістю стовпців у 'data' ({len(data[0])})"
 
+df = pd.DataFrame(data, columns=columns)
 
-    print(priority_queue)
-    # print("=== Testing Queue witout priority ===\n")
-    #
-    # queue = Queue[str](max_size=3)
-    #
-    # print("Enqueuing QueueItems:")
-    # print("Queued:", queue.enqueue(QueueItem("Client 1", 1, priority=0)))
-    # print("Queued:", queue.enqueue(QueueItem("Client 2", 2, priority=1)))
-    # print("Queued:", queue.enqueue(QueueItem("Client 3", 3, priority=0)))
-    #
-    # print("\nCurrent queue state:")
-    # print(queue)
-    #
-    # print("\nDequeuing with wait times:")
-    # print("Dequeued:", queue.dequeue(wait_time=5))
-    # print("Dequeued:", queue.dequeue(wait_time=3))
-    # print("Dequeued:", queue.dequeue(wait_time=0))
-    #
-    # print("\nFinal queue state:")
-    # print(queue)
-    #
-    # print("=== Testing PriorityQueue with Different Priorities ===\n")
-    #
-    # priority_queue = PriorityQueue[str](max_size=6)
-    #
-    # print("Queued:", priority_queue.enqueue(QueueItem("Client 1", 1, priority=0)))
-    # print("Queued:", priority_queue.enqueue(QueueItem("Client 2", 2, priority=1)))
-    # print("Queued:", priority_queue.enqueue(QueueItem("Client 3", 3, priority=0)))
-    #
-    # print("Current Priority Queue State:")
-    # print(priority_queue)
-    #
-    # print("\nDequeuing elements:")
-    # wait_time = 0
-    # while not priority_queue.is_empty():
-    #     item = priority_queue.dequeue(wait_time=wait_time)
-    #     print("Dequeued:", item)
-    #     wait_time += 5
-    #
-    # print("\nFinal Priority Queue State:")
-    # print(priority_queue)
+# Побудова графіків
+sns.set(style="whitegrid")
+
+# 1. Залежність середнього часу очікування в черзі від інтенсивності надходження клієнтів із пріоритетом
+plt.figure(figsize=(10, 6))
+sns.lineplot(x="λ_1", y="W_q", data=df, marker="o")
+plt.title("Залежність середнього часу очікування в черзі від λ_1")
+plt.xlabel("λ_1 (інтенсивність надходження клієнтів із пріоритетом)")
+plt.ylabel("W_q (середній час очікування в черзі)")
+plt.show()
+
+# 2. Залежність середнього часу перебування в системі від інтенсивності обслуговування каси
+plt.figure(figsize=(10, 6))
+sns.lineplot(x="μ_1", y="W_s", data=df, marker="o")
+plt.title("Залежність середнього часу перебування в системі від μ_1")
+plt.xlabel("μ_1 (інтенсивність обслуговування каси)")
+plt.ylabel("W_s (середній час перебування в системі)")
+plt.show()
+
+# 3. Залежність коефіцієнта використання столиків від кількості столиків
+plt.figure(figsize=(10, 6))
+sns.lineplot(x="n", y="K_2", data=df, marker="o")
+plt.title("Залежність коефіцієнта використання столиків від кількості столиків")
+plt.xlabel("n (кількість столиків)")
+plt.ylabel("K_2 (коефіцієнт використання столиків)")
+plt.show()
+
+# 4. Залежність коефіцієнта використання кас від інтенсивності надходження клієнтів без пріоритету
+plt.figure(figsize=(10, 6))
+sns.lineplot(x="λ_2", y="K_1", data=df, marker="o")
+plt.title("Залежність коефіцієнта використання кас від λ_2")
+plt.xlabel("λ_2 (інтенсивність надходження клієнтів без пріоритету)")
+plt.ylabel("K_1 (коефіцієнт використання кас)")
+plt.show()
+
+# 5. Залежність часу обслуговування за столиком від стандартного відхилення часу
+plt.figure(figsize=(10, 6))
+sns.lineplot(x="σ", y="μ_2", data=df, marker="o")
+plt.title("Залежність часу обслуговування за столиком від σ")
+plt.xlabel("σ (стандартне відхилення часу користування столиком)")
+plt.ylabel("μ_2 (інтенсивність обслуговування столиків)")
+plt.show()
